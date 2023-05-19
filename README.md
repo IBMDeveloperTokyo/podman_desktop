@@ -6,6 +6,7 @@
    - Windowsの場合[リンク](https://qiita.com/youn0810/items/4e7ca4050413f3c6df08)
    - Macの場合[リンク](https://qiita.com/LgmQue/items/a01367a49b973ee31a2f)
 1. IBM Cloudのアカウント
+　　　　　　- IBM Cloudのコンテナレジストリー以外を利用する場合は、一部手順を読み替えて実施ください。
 
 ## イメージのPULL
 まずはコンテナの元となるイメージをPULLします。
