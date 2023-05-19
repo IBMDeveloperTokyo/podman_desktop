@@ -1,5 +1,12 @@
 # podman_desktop
 
+## 事前準備
+
+1. Podman Desktopのインストール
+   - Windowsの場合[リンク](https://qiita.com/youn0810/items/4e7ca4050413f3c6df08)
+   - Macの場合[リンク](https://qiita.com/LgmQue/items/a01367a49b973ee31a2f)
+1. IBM Cloudのアカウント
+
 ## イメージのPULL
 まずはコンテナの元となるイメージをPULLします。
 左側にあります、メニューバーから **Images** をクリックします。（図①）
@@ -142,6 +149,164 @@ CLIで同様の処理を行う場合は下記のコマンドを実行する必�
 podman run -d --name dojo20230526 -v C:\Dojo\20230526:/usr/dojo20230526 -p 8080:8080 -p 9990:9990 -p 9999:9999 -e ENV_NAME=test docker.io/library/my-custom-image:latest
 ```
 
-## イメージのタグつけ
+## コンテナレジストリの準備
 
-## イメージPUSH
+IBM Cloudにログインし、左上のナビゲーションメニューを選択し、[Container Registry] > [名前空間]をクリックします。</br>
+![cr_001.png](./images/cr_001.png)
+
+> **Note**</br>
+> Container Registryのサービスが未作成の場合は作成をしてください。</br>
+> 動作確認はライトプランで実施しています。
+
+ロケーションは __東京__ を指定し、[作成]をクリックします。</br>
+![cr_002.png](./images/cr_002.png)
+
+名前を入力し、[作成]をクリックします。</br>
+![cr_003.png](./images/cr_003.png)
+
+> **Note**</br>
+> 今回はpodman-desktop-sampleという名前空間を使用します。</br>
+> 名前空間は一意である必要があるため、ご自身の環境で試す際は違う名前を指定し作成・使用してください。
+
+## 認証情報の作成
+
+名前空間が作成できたら、podmanコマンドでローカルのコンテナイメージをIBM CloudのコンテナレジストリにPUSHするための認証情報を準備します。
+
+画面上部の[管理]から[アクセス(IAM)]をクリックします。</br>
+![cr_004.png](./images/cr_004.png)
+
+管理画面が表示されたら、[APIキー]を選択し、[作成]をクリックします。</br>
+![cr_005.png](./images/cr_005.png)
+
+ダイアログが表示されたら、APIキーの名前を入力して、[作成]をクリックします。</br>
+![cr_006.png](./images/cr_006.png)
+
+APIキーの作成が完了したら、コピーしメモ帳などに保管＆ダウンロードをしましょう。</br>
+![cr_007.png](./images/cr_007.png)
+
+> **Warning**</br>
+> この画面を閉じると二度と中身を確認できなくなるため、忘れた場合や紛失した場合はキーを削除し、再度作成しましょう。
+
+## コンテナレジストリへのログイン
+
+Podman DesktopでIBM Cloudのコンテナレジストリへログインをしたいところですが、執筆時点ではできないためターミナルでコマンドを実行します。</br>
+コマンドを実行し終わると、下記リストに作成した名前空間のコンテナレジストリが追加される様になります。</br>
+![cr_008.png](./images/cr_008.png)
+
+まずはIBM Cloud CLIが必要になるため下記コマンドを実行します。
+```cmd
+$ ibmcloud plugin install container-registry -r 'IBM Cloud'
+```
+
+IBM Cloud CLIがインストールできたら、CLIでIBM Cloudにログインをします。</br>
+IBM Cloudの右上のユーザーアイコンをクリックし、[CLIとAPIにログイン]をクリックします。</br>
+![cr_009.png](./images/cr_009.png)
+
+ワンタイム・パスコードが表示されたら、__IBM Cloud CLI__ に表示されているコマンドをコピーします。</br>
+![cr_010.png](./images/cr_010.png)
+
+> **Warning**
+> このコマンドは第三者に共有しない様に注意してください。
+
+コピーしたコマンドを実行します。
+```cmd
+$ ibmcloud login -a https://cloud.ibm.com -u passcode -p XXXXXXXXXX
+API エンドポイント: https://cloud.ibm.com
+認証中です...
+OK
+
+ターゲットのアカウント XXX's Account (xxxxxxxxxxxxxxxxxxxxxxx)
+```
+
+リージョンを聞かれるので、`jp-tok`を選択します。
+
+```
+リージョンを選択します (または Enter キーを押してスキップします):
+1. au-syd
+2. in-che
+3. jp-osa
+4. jp-tok
+5. kr-seo
+6. eu-de
+7. eu-gb
+8. ca-tor
+9. us-south
+10. us-east
+11. br-sao
+数値を入力してください> 4
+ターゲットのリージョン jp-tok
+```
+
+無事にログインができたら下記情報が表示されます。
+
+```                         
+API エンドポイント:      https://cloud.ibm.com
+Region:                  jp-tok
+ユーザー:                xxx@xxx.com
+アカウント:              XXX's Account (xxxxxxxxxxxxxxxxxxxxxxx)
+リソース・グループ:      リソース・グループがターゲットになっていません。'ibmcloud target -g RESOURCE_GROUP' を使用してください
+CF API エンドポイント:   
+組織:                    
+スペース:  
+```
+
+最後に先ほど作成したAPIキーを使って、PodmanでIBM Cloudのコンテナレジストリにログインをします。</br>
+①にはiamapikey、②には控えておいたAPIキーを入力します。
+```cmd
+$ podman login jp.icr.io
+Username: ①
+Password: ②(入力内容は画面には表示されません)
+Login Succeeded!
+```
+
+ログインができたので、Podman DesktopのRegistriesに表示されているか確認してみましょう。</br>
+右下の[歯車マーク] > [Registries]をクリックします。</br>
+![cr_011.png](./images/cr_011.png)</br>
+Podman Desktopでもレジストリが表示されました。
+
+## コンテナイメージのPUSH
+
+今回は`redhat/ubi8-micro` のコンテナイメージを使って動作確認しようと思います。</br>
+まずは[Images] > [Pull an image]からイメージをPULLします。</br>
+![push_001.png](./images/push_001.png)
+
+`redhat/ubi8-micro`を入力し、[Pull image]をクリックします。</br>
+![push_002.png](./images/push_002.png)
+
+完了したら[Done]をクリックします。</br>
+![push_003.png](./images/push_003.png)
+
+自身のレジストリにPUSHするために、タグ付けをします。</br>
+タグ付けはコマンドで実行する必要があるので下記コマンドを打ちましょう。
+```cmd
+$ podman tag イメージ jp.icr.io/{名前空間名}/{リポジトリー名}
+```
+
+`redhat/ubi8-micro` のコンテナイメージにタグ付けをしてみた場合は下記の様になります。
+```cmd
+$ podman tag redhat/ubi8-micro jp.icr.io/podman-desktop-sample/ubi8-micro
+```
+
+タグ付けができると、GUIはこの様な状態になります。</br>
+![push_004.png](./images/push_004.png)
+
+それではレジストリにPUSHしましょう。</br>
+ImagesにてPUSHしたいイメージのACTIONSの3点リーダーをクリックし、[Push image]をクリックします。
+![push_005.png](./images/push_005.png)
+
+タグに紐づくイメージが選択できるので、`jp.icr.io/podman-desktop-sample/ubi8-micro`を選択し、[Push image]をクリックします。</br>
+![push_006.png](./images/push_006.png)
+
+PUSHできました。</br>
+[Done]をクリックして閉じておきましょう。</br>
+![push_007.png](./images/push_007.png)
+
+CLIで同様の処理を行う場合は下記のコマンドを実行する必要があります。</br>
+```cmd
+podman push jp.icr.io/podman-desktop-sample/ubi8-micro:latest
+```
+
+最後にIBM Cloudのコンテナレジストリを確認してみましょう。</br>
+![push_008.png](./images/push_008.png)
+
+PUSHしたイメージが確認できました、以上で終了です。
