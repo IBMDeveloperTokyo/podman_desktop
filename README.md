@@ -261,7 +261,7 @@ Login Succeeded!
 ```
 
 ログインができたので、Podman DesktopのRegistriesに表示されているか確認してみましょう。</br>
-右下の[歯車マーク] > [Registries]をクリックします。</br>
+左下の[歯車マーク] > [Registries]をクリックします。</br>
 ![cr_011.png](./images/cr_011.png)</br>
 Podman Desktopでもレジストリが表示されました。
 
