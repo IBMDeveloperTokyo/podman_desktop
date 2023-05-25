@@ -21,7 +21,7 @@ Podman Desktopを使って、コンテナの基本操作を学べます。</br>
 1. Dockerfileのダウンロード
    - 任意のディレクトリにダウンロードしてください。
 1. jboss-eap-6.4.0.zipのダウンロード
-   1. [Red Hat Customer Portal](https://access.redhat.com)にログインします。（※アカウントをお持ちでない方は、アカウント作成が必要となります）
+   1. [Red Hat Customer Portal](https://access.redhat.com) にログインします。（※アカウントをお持ちでない方は、アカウント作成が必要となります）
    2. **Downloads** をクリックします。
    3. Product Downloads リストから **Red Hat JBoss Enterprise Application Platform** をクリックします。
    4. **Version** に **6.4** を選択します。
