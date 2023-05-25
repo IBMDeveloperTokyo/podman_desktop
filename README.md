@@ -18,8 +18,18 @@ Podman Desktopを使って、コンテナの基本操作を学べます。</br>
    - Macの場合[リンク](https://qiita.com/LgmQue/items/a01367a49b973ee31a2f)
 1. IBM Cloudのアカウント
    - IBM Cloudのコンテナレジストリー以外を利用する場合は、一部手順を読み替えて実施ください。
+1. Dockerfileのダウンロード
+   - 任意のディレクトリにダウンロードしてください。
+1. jboss-eap-6.4.0.zipのダウンロード
+   1. [Red Hat Customer Portal](https://access.redhat.com)にログインします。（※アカウントをお持ちでない方は、アカウント作成が必要となります）
+   2. **Downloads** をクリックします。
+   3. Product Downloads リストから **Red Hat JBoss Enterprise Application Platform** をクリックします。
+   4. **Version** に **6.4** を選択します。
+   5. Releases タブにある **Red Hat JBoss Enterprise Application Platform 6.4.0** の **Download** をクリックします。
+   6. ダウンロードしたjboss-eap-6.4.0.zipをDockerfileと同じディレクトリに格納します。 
 
 ## イメージのPULL
+
 まずはコンテナの元となるイメージをPULLします。
 左側にあります、メニューバーから **Images** をクリックします。（図①）
 Images画面表示後、画面上部にあります **Pull an image** をクリックします。（図②）
@@ -45,12 +55,14 @@ podman pull redhat/ubi8-micro
 ```
 
 ## イメージの削除
+
 イメージを削除する方法は以下の3つとなります。
 1. 個別削除
 1. 選択削除
 1. 全削除（※未実行イメージのみ）
 
 ### 1. 個別削除
+
 イメージの右側にある **ゴミ箱アイコン** をクリックすると、該当イメージを削除できます。（図①）
 ![rmi_001.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/2715466/682a30e6-e289-bb2b-a480-19b8f0ecb5db.png)
 
@@ -60,6 +72,7 @@ podman rmi docker.io/redhat/ubi8-micro
 ```
 
 ### 2. 選択削除
+
 削除したいイメージの左側にある **チェックボックスにチェック** をし（図①）、検索テキストボックス右側に表示される **ゴミ箱アイコン** をクリックすると、選択したイメージを削除できます。（図①）
 ![rmi_002.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/2715466/3491f601-8581-87cd-f4b3-6ab8a02cf918.png)
 
@@ -69,6 +82,7 @@ podman rmi registry.access.redhat.com/ubi7 docker.io/library/my-custom-image
 ```
 
 ### 3. 全削除（※未実行イメージのみ）
+
 Images画面右上部にある **Prune images** をクリックします。（図①）
 ![rmi_003.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/2715466/12b4cb81-2899-da5d-b4ae-b337623baef6.png)
 
@@ -81,6 +95,7 @@ podman rmi -a
 ![rmi_004.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/2715466/bae62254-0f79-ccb4-0a74-c13cb609bff0.png)
 
 ## イメージのビルド
+
 イメージはPULLするだけでなく、Containerfile（Dockerfile）を使用してビルドすることもできます。
 
 Images画面右上部にある **Build an image** をクリックします。（図①）
@@ -108,6 +123,7 @@ podman build -t my-custom-image -f C:\Dojo\20230526\Dockerfile C:\Dojo\20230526
 ```
 
 ## コンテナRUN
+
 イメージを使ってコンテナを起動します。
 
 コンテナ起動したいイメージの右側にある **再生アイコン** をクリックします。（図①）
